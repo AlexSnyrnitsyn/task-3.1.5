@@ -21,6 +21,10 @@ public class Application {
         user.setId(3L);
         communication.saveUser(user);
 
+        user.setName("Thomas");
+        user.setLastName("Shelby");
+        communication.updateUser(3L, user);
+
         System.out.println(allUsers);
 
     }
