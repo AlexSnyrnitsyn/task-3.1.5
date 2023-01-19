@@ -19,13 +19,14 @@ public class Application {
 
         User user = new User("James", "Brown", (byte) 24);
         user.setId(3L);
-        communication.saveUser(user);
+        String wordsCode1 = communication.saveUser(user);
 
         user.setName("Thomas");
         user.setLastName("Shelby");
-        communication.updateUser(3L, user);
+        String wordsCode2 = communication.updateUser(3L, user);
 
-        System.out.println(allUsers);
+        String wordsCode3 = communication.deleteUser(3L);
 
+        System.out.println(wordsCode1 + wordsCode2 + wordsCode3);
     }
 }

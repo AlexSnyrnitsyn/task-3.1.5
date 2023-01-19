@@ -15,7 +15,6 @@ public class Communication {
     private final RestTemplate restTemplate;
     private final String URL = "http://94.198.50.185:7081/api/users";
     private String cookie;
-    private final HttpHeaders httpHeaders = new HttpHeaders();
 
     @Autowired
     public Communication(RestTemplate restTemplate) {
@@ -23,31 +22,31 @@ public class Communication {
     }
 
     public List<User> getAllUsers(){
-
         ResponseEntity<List<User>> responseEntity = restTemplate.exchange(URL, HttpMethod.GET, null,
                 new ParameterizedTypeReference<>() {});
 
         cookie = responseEntity.getHeaders().get("Set-Cookie").get(0).split(";")[0].split("=")[1];
-        System.out.println(cookie);
-
         return responseEntity.getBody();
     }
 
-    public void saveUser(User user) {
-
-        httpHeaders.add("Session-Id", cookie);
-        HttpEntity<User> httpEntity = new HttpEntity<>(user, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(URL, HttpMethod.POST, httpEntity, String.class);
-        System.out.println(responseEntity.getBody());
-
+    public String saveUser(User user) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Cookie", "JSESSIONID=" + cookie);
+        HttpEntity<String> responseEntity = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(user, httpHeaders), String.class);
+        return responseEntity.getBody();
     }
 
-    public void updateUser(Long id, User user) {
+    public String updateUser(Long id, User user) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Cookie", "JSESSIONID=" + cookie);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(URL, HttpMethod.PUT, new HttpEntity<>(user, httpHeaders), String.class);
+        return responseEntity.getBody();
+    }
 
-        httpHeaders.add("Session-Id", cookie);
-        HttpEntity<User> httpEntity = new HttpEntity<>(user, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(URL, HttpMethod.PUT, httpEntity, String.class);
-        System.out.println(responseEntity.getBody());
-
+    public String deleteUser(Long id) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Cookie", "JSESSIONID=" + cookie);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(URL + "/" + id, HttpMethod.DELETE, new HttpEntity<>(httpHeaders), String.class);
+        return responseEntity.getBody();
     }
 }
